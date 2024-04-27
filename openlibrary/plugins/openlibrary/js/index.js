@@ -545,4 +545,12 @@ jQuery(function () {
         import(/* webpackChunkName: "affiliate-links" */ './affiliate-links')
             .then(module => module.initAffiliateLinks(affiliateLinksSection))
     }
+
+    const editButton = document.querySelector('.editButton');
+    if (editButton){
+        // This is a very basic example to loading the edit page into cache when we visit a page with an edit button.
+        // It requires service worker to be setup with the page we are fetching.
+        const url = editButton.querySelector('a').href;
+        fetch(url);
+    }
 });

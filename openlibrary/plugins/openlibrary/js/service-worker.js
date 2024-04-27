@@ -1,10 +1,13 @@
 import { ExpirationPlugin } from 'workbox-expiration';
 import { offlineFallback } from 'workbox-recipes';
 import { setDefaultHandler, registerRoute } from 'workbox-routing';
-import { CacheFirst, NetworkOnly, NetworkFirst } from 'workbox-strategies';
+import { CacheFirst, NetworkOnly, NetworkFirst, StaleWhileRevalidate } from 'workbox-strategies';
 import { CacheableResponsePlugin } from 'workbox-cacheable-response';
 import { clientsClaim } from 'workbox-core';
-import { matchMiscFiles, matchSmallMediumCovers, matchLargeCovers, matchStaticImages, matchStaticBuild, matchArchiveOrgImage } from './service-worker-matchers';
+import {
+    matchMiscFiles, matchSmallMediumCovers, matchLargeCovers, matchStaticImages, matchStaticBuild, matchArchiveOrgImage
+    , matchAuthorEditPage, matchEditionEditPage
+} from './service-worker-matchers';
 
 self.skipWaiting();
 clientsClaim();
@@ -116,6 +119,20 @@ registerRoute(
         ],
     })
 );
+
+// Cache edit pages
+registerRoute(
+    (data) => { return matchAuthorEditPage(data) || matchEditionEditPage(data) },
+    new StaleWhileRevalidate({
+        cacheName: 'edit-pages',
+        plugins: [
+            new ExpirationPlugin({
+                maxAgeSeconds: 60,
+            }),
+            cacheableResponses
+        ]
+    })
+)
 
 // cache all other requests on the same origin
 registerRoute(

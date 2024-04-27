@@ -49,3 +49,14 @@ export function matchArchiveOrgImage({ url }) {
     // also caches some covers
     return url.href.startsWith('https://archive.org/services/img/');
 }
+
+export function matchAuthorEditPage({url}){
+    const regex = /\/authors\/OL\d+A\/.*\/edit/
+    return regex.test(url.pathname);
+}
+
+export function matchEditionEditPage({url}){
+    const regex = /\/books\/OL\d+M\/.*\/edit/
+    return regex.test(url.pathname);
+}
+
